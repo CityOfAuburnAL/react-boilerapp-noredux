@@ -1,0 +1,9 @@
+.App {
+  text-align: center;
+  display: flex;
+  height: 100%;
+}
+
+.App-link {
+  color: #61dafb;
+}
