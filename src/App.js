@@ -1,209 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Router, Switch as SwitchRoute, Route } from 'react-router-dom';
 //Styles
 import './App.css';
 //Routing/History/Services
 import { history } from './services/';
-import userAuthStatus from 'coa-authorization';
+import { userLogin } from './services/coa-authorization';
+import { StateProvider } from './services/State'; //should be able to get from NPM but microServices aren't sharing cookie
 //Material-ui layout needs
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Hidden from '@material-ui/core/Hidden';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+//Components
+import { SnackbarProvider } from 'notistack';
+import AppSkeleton from './components/AppSkeleton';
 //Content Pages
 import { NotFoundPage, HomePage } from './pages';
 
 //Layout styles
-const drawerWidth = 240;
-const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    zIndex: 1,
-    overflow: 'hidden',
-    position: 'relative',
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
   },
-  grow: {
-    flexGrow: 1,
-  },
-  navIconHideSm: {
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-  },
-  navIconHideLg: {
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    },
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  appBar: {
-    position: 'absolute',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    width: drawerWidth,
-    transitionDuration: '0ms !important',
-  },
-  drawerDocked: {
-    height: '100%',
-  },
-  toolbar: theme.mixins.toolbar,
-  list: {
-  },
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
-    minWidth: 0, // So the Typography noWrap works
-  },
-  contentShift: {
-    [theme.breakpoints.up('md')]: {
-      marginLeft: -drawerWidth,
-    },
+  palette: {
+    primary: { main: '#03a9f4' }, //lightblue from @material-ui/core/colors/
+    secondary: { main: '#ff9800' }, //orange
   },
 });
 
-function App(props) {
-  const { classes } = props;
-  const [drawer, setDrawer] = useState(false);
-  const [persistDrawer, setPersistDrawer] = useState(true);
-  const [currentPath, setCurrentPath] = useState(history.location.pathname);
-  const [accountIcon, setAccountIcon] = useState(null);
-  const user = userAuthStatus();
 
-  useEffect(() => {
-    history.listen((location, action) => {
-      // clear alert on location change
-      // Todo?
-      setDrawer(false);
-      setCurrentPath(location.pathname);
-    });
-  })
-
-  const handleListItemClick = (event, index, route) => {
-    history.push(`${process.env.PUBLIC_URL}${route}`);
+function App() {
+  // TODO - move out to an appStore.js file?
+  // TODO - rewrite `reducer` function in State.js to also update localStorage?
+  // TODO - perhaps make a way to update localStorage without saving the data for local timeouts?
+  const STORES = {
+    CACHED_USER: 'userProfile',
+  }
+  const initialState = {
+    userProfile: JSON.parse(localStorage.getItem(STORES.CACHED_USER)) || {"name":{"fullName":"","firstName":"","lastName":""},"email":"","phone":null,"department":null,"title":null,"employeeNumber":null,"userPrincipalName":"","roles":[]},
   };
+  const init = async () => {
+    let userProfile = userLogin()
+                        .then((user) => {
+                          // Get additional permissions
+                          // if (user.canPublish === undefined) {
+                          //   return fetch('https://api2.auburnalabama.org/pressrelease/canIPublish', { credentials: 'include' })
+                          //     .then((response) => { return {...user, canPublish: response.ok}; })
+                          //     .catch(() => {return {...user, canPublish: false }; });
+                          // }
 
-  /** Side Navigation */
-  const drawerContents = (
-    <List component="nav">
-      <ListItem
-        button
-        selected={currentPath === `${process.env.PUBLIC_URL}/`}
-        onClick={event => handleListItemClick(event, 0, '/')}
-      >
-        Home
-      </ListItem>
-      <ListItem
-        button
-        selected={currentPath === `${process.env.PUBLIC_URL}/it`}
-        onClick={event => handleListItemClick(event, 1, '/it')}
-      >
-        Bad Link
-      </ListItem>
-    </List>
-  )
-
+                          // Return
+                          return user;
+                        });
+    let everyoneFinish = await Promise.all([userProfile]);
+    return { userProfile: everyoneFinish[0] };
+  }
+  
   return (
-    <div className="App">
-      <AppBar position="absolute" className={classes.appBar}>
-        <Toolbar>
-          <IconButton onClick={() => { setDrawer(!drawer)}} className={`${classes.menuButton} ${classes.navIconHideLg}`} color="inherit" aria-label="Menu">
-            <MenuIcon />
-          </IconButton>
-          <IconButton onClick={() => { setPersistDrawer(!persistDrawer)}} className={`${classes.menuButton} ${classes.navIconHideSm}`} color="inherit" aria-label="Menu">
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
-            City of Auburn
-          </Typography>
-          <div>
-            <IconButton
-              aria-owns={accountIcon ? 'menu-appbar' : null}
-              aria-haspopup="true"
-              onClick={(event) => { setAccountIcon(event.currentTarget)}}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={accountIcon}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(accountIcon)}
-              onClose={() => { setAccountIcon(null)}}
-            >
-              <MenuItem onClick={() => { setAccountIcon(null)}}>{user.Email}</MenuItem>
-              <MenuItem onClick={() => { user.Logout()}}>Logout</MenuItem>
-            </Menu>
-          </div>
-        </Toolbar>
-      </AppBar>
-      <Hidden mdUp>
-        <SwipeableDrawer
-          open={drawer}
-          onClose={() => { setDrawer(!drawer)}}
-          onOpen={() => { setDrawer(!drawer)}}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-        >
-          <div className={classes.list}>
-            {drawerContents}
-          </div>
-        </SwipeableDrawer>
-      </Hidden>
-      <Hidden smDown implementation="css">
-        <Drawer
-          variant="persistent"
-          anchor="left"
-          open={persistDrawer}
-          classes={{
-            paper: classes.drawerPaper,
-            docked: classes.drawerDocked,
-          }}
-        >
-          <div className={classes.list}>
-            <div className={classes.toolbar} />
-            {drawerContents}
-          </div>
-        </Drawer>
-      </Hidden>
-      <main className={`${classes.content} ${(!persistDrawer && classes.contentShift)}`}>
-        <div className={classes.toolbar} />
-        <Router history={history} basename={'/press-release-editor'}>
-          <SwitchRoute>
-            <Route exact path={`${process.env.PUBLIC_URL}/`} component={HomePage}></Route>
-            <Route component={NotFoundPage}/>
-          </SwitchRoute>
-        </Router>
-      </main>
-    </div>
+    <SnackbarProvider>
+      <StateProvider initialState={initialState} initFn={init}>
+        <MuiThemeProvider theme={theme}>
+          <AppSkeleton>
+            <Router history={history} basename={'/committees'}>
+                <SwitchRoute>
+                  <Route exact path={`${process.env.PUBLIC_URL}/`} component={HomePage}></Route>
+                  <Route component={NotFoundPage}/>
+                </SwitchRoute>
+              </Router>
+          </AppSkeleton>
+        </MuiThemeProvider>
+      </StateProvider>
+    </SnackbarProvider>
   );
 }
 
-export default withStyles(styles)(App);
+export default App;

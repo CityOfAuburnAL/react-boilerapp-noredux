@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.2.1",
     "coa-authorization": "^1.0.6",
     "history": "^4.9.0",
+    "notistack": "0.8.8",
     "react": "^16.8.6",
     "react-dom": "16.8.6",
     "react-router": "^5.0.1",
