@@ -1,18 +1,18 @@
 {
-  "name": "my-press-release",
-  "homepage": "https://my.auburnalabama.org/press-release-editor/",
+  "name": "my-committees",
+  "homepage": "https://my.auburnalabama.org/committees/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^3.9.2",
-    "@material-ui/icons": "^3.0.2",
+    "@material-ui/core": "^4.3.0",
+    "@material-ui/icons": "^4.2.1",
     "coa-authorization": "^1.0.6",
-    "history": "^4.7.2",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "react-router": "^4.3.1",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.5"
+    "history": "^4.9.0",
+    "react": "^16.8.6",
+    "react-dom": "16.8.6",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "^3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,8 +32,8 @@
   ],
   "devDependencies": {
     "fse": "^4.0.1",
-    "babel-loader": "^8.0.4",
-    "eslint-loader": "^2.1.1",
-    "eslint-plugin-react": "^7.11.1"
+    "babel-loader": "8.0.5",
+    "eslint-loader": "^2.2.1",
+    "eslint-plugin-react": "^7.14.3"
   }
 }

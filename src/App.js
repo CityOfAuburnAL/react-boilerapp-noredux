@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Router, Switch as SwitchRoute, Route } from 'react-router-dom';
 //Styles
-import classNames from 'classnames';
 import './App.css';
 //Routing/History/Services
 import { history } from './services/';
@@ -123,10 +122,10 @@ function App(props) {
     <div className="App">
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
-          <IconButton onClick={() => { setDrawer(!drawer)}} className={classNames(classes.menuButton, classes.navIconHideLg)} color="inherit" aria-label="Menu">
+          <IconButton onClick={() => { setDrawer(!drawer)}} className={`${classes.menuButton} ${classes.navIconHideLg}`} color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
-          <IconButton onClick={() => { setPersistDrawer(!persistDrawer)}} className={classNames(classes.menuButton, classes.navIconHideSm)} color="inherit" aria-label="Menu">
+          <IconButton onClick={() => { setPersistDrawer(!persistDrawer)}} className={`${classes.menuButton} ${classes.navIconHideSm}`} color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" className={classes.grow}>
@@ -194,7 +193,7 @@ function App(props) {
           </div>
         </Drawer>
       </Hidden>
-      <main className={classNames(classes.content, !persistDrawer && classes.contentShift)}>
+      <main className={`${classes.content} ${(!persistDrawer && classes.contentShift)}`}>
         <div className={classes.toolbar} />
         <Router history={history} basename={'/press-release-editor'}>
           <SwitchRoute>
