@@ -1,19 +1,19 @@
 {
-  "name": "my-committees",
-  "homepage": "https://my.auburnalabama.org/committees/",
+  "name": "my-dashboard",
+  "homepage": "https://my.auburnalabama.org/dashboard/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.3.0",
-    "@material-ui/icons": "^4.2.1",
+    "@material-ui/core": "^4.5.0",
+    "@material-ui/icons": "^4.4.3",
     "coa-authorization": "^1.0.6",
-    "history": "^4.9.0",
+    "history": "^4.10.1",
     "notistack": "0.8.8",
-    "react": "^16.8.6",
-    "react-dom": "16.8.6",
-    "react-router": "^5.0.1",
-    "react-router-dom": "^5.0.1",
-    "react-scripts": "^3.0.1"
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -33,8 +33,8 @@
   ],
   "devDependencies": {
     "fse": "^4.0.1",
-    "babel-loader": "8.0.5",
-    "eslint-loader": "^2.2.1",
-    "eslint-plugin-react": "^7.14.3"
+    "babel-loader": "8.0.6",
+    "eslint-loader": "^3.0.2",
+    "eslint-plugin-react": "^7.16.0"
   }
 }

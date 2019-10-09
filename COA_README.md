@@ -13,6 +13,22 @@ N/A
 
 1. No ideas yet
 
+# Getting Started
+
+`git clone https://github.com/CityOfAuburnAL/react-boilerapp-noredux.git ./`
+
+(optionally)
+
+Updated packages, verify integirty commit and push changes
+
+`delete .git\`
+
+`git init`
+
+`git add .`
+
+`git commit`
+
 # Commands
 
 `npm start`
