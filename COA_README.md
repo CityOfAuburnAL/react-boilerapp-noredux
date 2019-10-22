@@ -3,7 +3,7 @@
 
 ## Bugs (In-Development Status)
 
-N/A
+1. There was an error while being presented with login, after login render was fine.
 
 ## Missing Functionality (In, I over-promised status)
 

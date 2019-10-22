@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+
+import { useEffect, useState } from 'react';
 import { useStateStore } from '../../services/State';
 import { history } from '../../services/history';
 import { userLogout } from '../../services/coa-authorization';
-import { Menu, MenuItem, List, ListItem, AppBar, Toolbar, IconButton, Hidden, SwipeableDrawer, Drawer, Typography, withStyles } from '@material-ui/core';
+import { Menu, MenuItem, AppBar, Toolbar, IconButton, Hidden, SwipeableDrawer, Drawer } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 
 //Layout styles
 const drawerWidth = 240;
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     zIndex: 1,
@@ -50,7 +55,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     minWidth: 0, // So the Typography noWrap works
   },
   contentShift: {
@@ -58,32 +63,41 @@ const styles = theme => ({
       marginLeft: -drawerWidth,
     },
   },
-});
+}));
 
-function AppSkeleton({ classes, children }) {
-    const [drawer, setDrawer] = useState(false);
-    const [persistDrawer, setPersistDrawer] = useState(true);
-    const [currentPath, setCurrentPath] = useState(history.location.pathname);
-    const [accountIcon, setAccountIcon] = useState(null);
-    const [user] = useStateStore('userProfile');// userAuthStatus("pressrelease");
+function AppSkeleton({ children }) {
+  const classes = useStyles();
+  const [drawer, setDrawer] = useState(false);
+  const [persistDrawer, setPersistDrawer] = useState(true);
+  const [isOpen, setIsOpen] = useState('');
+  const [currentPath, setCurrentPath] = useState(history.location.pathname);
+  const [accountIcon, setAccountIcon] = useState(null);
+  const [user] = useStateStore('userProfile');// userAuthStatus("pressrelease");
   
-    useEffect(() => {
-      history.listen(() => {
-        setDrawer(false);
-        setCurrentPath(history.location.pathname);
-      });
-      
-      //can't get current state, only initial state
-      document.body.addEventListener('keyup', (event) => {
-        if (event.which === 27) {
-          setPersistDrawer(!window.globalPersistDrawer)
-        }
-      });
-    }, [])
+  useEffect(() => {
+    history.listen(() => {
+      setDrawer(false);
+      setCurrentPath(history.location.pathname);
+    });
+    
+    //can't get current state, only initial state
+    document.body.addEventListener('keyup', (event) => {
+      if (event.which === 27) {
+        setPersistDrawer(!window.globalPersistDrawer)
+      }
+    });
+  }, []);
   
-    useEffect(() => {
-      window.globalPersistDrawer = persistDrawer;
-    }, [persistDrawer]);
+  useEffect(() => {
+    window.globalPersistDrawer = persistDrawer;
+  }, [persistDrawer]);
+
+  const openMenu = (menu) => {
+    if (menu !== isOpen)
+      setIsOpen(menu);
+    else
+      setIsOpen('');
+  }
 
   const handleListItemClick = (event, index, route) => {
     history.push(`${process.env.PUBLIC_URL}${route}`);
@@ -107,7 +121,7 @@ function AppSkeleton({ classes, children }) {
         Bad Link
       </ListItem>
     </List>
-  )
+  );
 
   return (
     <div className="App">
@@ -119,9 +133,7 @@ function AppSkeleton({ classes, children }) {
           <IconButton onClick={() => { setPersistDrawer(!persistDrawer)}} className={`${classes.menuButton} ${classes.navIconHideSm}`} color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
-            City of Auburn
-          </Typography>
+          <h6 className={classes.grow}>City of Auburn</h6>
           <div>
             <IconButton
               aria-owns={accountIcon ? 'menu-appbar' : null}
@@ -192,4 +204,4 @@ function AppSkeleton({ classes, children }) {
   );
 }
 
-export default withStyles(styles)(AppSkeleton);
+export default AppSkeleton;
